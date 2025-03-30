@@ -1,3 +1,4 @@
 const std = @import("std");
+const errors = @import("errors.zig");
 
-pub fn dummy() void {}
+pub fn dummy() !void {}
