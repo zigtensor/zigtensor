@@ -23,4 +23,5 @@ pub fn build(b: *std.Build) void {
 
     test_step.dependOn(&run_unit_tests.step);
 
+    b.default_step.dependOn(test_step);
 }
