@@ -1,4 +1,4 @@
-pub const Error  = error { 
+pub const Error = error { 
     OutOfMemory,
     NotImplemented, 
     InvalidDevice,
