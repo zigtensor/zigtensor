@@ -20,8 +20,8 @@ test "expect tensor shape to be {2,3}" {
         null,
     );
 
-    defer _ = t.deinit();
-
     try std.testing.expect(t.shape.len == 2);
     try std.testing.expect(t.data.len == 24);
+
+    t.deinit();
 }
