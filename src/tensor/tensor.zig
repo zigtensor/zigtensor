@@ -17,7 +17,7 @@ pub const Tensor = struct {
     device_id: types.Device,
     data: []u8,
 
-    pub fn init (
+    pub fn initCpu (
         allocator: *std.mem.Allocator,
         shape: []const usize,
         strides: []usize,

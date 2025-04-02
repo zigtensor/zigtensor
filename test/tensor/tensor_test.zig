@@ -8,9 +8,10 @@ const Device = zigtensor.Device;
 test "expect tensor shape to be {2,3}" {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ =  gpa.deinit();
+
     var allocator = gpa.allocator();
     var stride = [_]usize{3,1};
-    var t = try Tensor.init(
+    var t = try Tensor.initCpu(
         &allocator,
         &[_]usize{2,3},
         &stride,
