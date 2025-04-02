@@ -1,5 +1,6 @@
 const std = @import("std");
 const types = @import("../types.zig");
+const errors = @import("../errors.zig");
 
 fn sizeOfDType(dtype: types.DType) usize {
     return switch (dtype) {
@@ -64,5 +65,27 @@ pub const Tensor = struct {
     
     pub fn deinit(self: *Tensor) void {
         self.allocator.free(self.data);
+    }
+
+    pub fn slice(self: *Tensor) ![]types.DType {
+        if (self.device_id == types.Device.CPU) {
+            switch (self.dtype) {
+                .f32 => {
+                    const element_count = self.data.len / @sizeOf(f32);
+                    return @as([*]f32, @ptrCast(self.data.ptr))[0..element_count];
+                },
+                .i32 => {
+                    const element_count = self.data.len / @sizeOf(i32);
+                    return @as([*]i32, @ptrCast(self.data.ptr))[0..element_count];
+                },
+                .bool => {
+                    const element_count = self.data.len / @sizeOf(bool);
+                    return @as([*]bool, @ptrCast(self.data.ptr))[0..element_count];
+                },
+            }
+        } else {
+            // Temporarily while no GPU allocation is implemented
+            return errors.InvalidDevice;
+        }
     }
 };
