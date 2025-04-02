@@ -42,7 +42,8 @@ pub const Tensor = struct {
 
         if (initial_data) |provided_data| {
             if (provided_data.len != expected_byte_size) {
-                std.log.err("Provided data size ({d}) does not match expected size ({d}) from shape ({d}) and dtype {s}.", .{ provided_data.len, expected_byte_size, shape, @tagName(dtype)});
+                std.log.err("Provided data size ({d}) does not match expected size ({d}) from shape ({d}) and dtype {s}.",
+                    .{ provided_data.len, expected_byte_size, shape, @tagName(dtype)});
                 return error.MismatchedDataSize;
             }
             data_slice = try allocator.dupe(u8, provided_data);
