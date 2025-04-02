@@ -1,17 +1,12 @@
 const std = @import("std");
 const types = @import("../types.zig");
 
-fn typeFromDType(comptime dtype: types.DType) type {
-    return switch (dtype) {
-        .f32 => f32,
-        .i32 => i32,
-        .bool => bool,
-        else => @compileError("Unsupported DType: " ++ @tagName(dtype)),
-    };
-}
-
 fn sizeOfDType(dtype: types.DType) usize {
-    return @sizeOf(typeFromDType(dtype));
+    return switch (dtype) {
+        .f32 => @sizeOf(f32),
+        .i32 => @sizeOf(i32),
+        .bool => @sizeOf(bool),
+    };
 }
 
 pub const Tensor = struct {
@@ -50,9 +45,9 @@ pub const Tensor = struct {
                 std.log.err("Provided data size ({d}) does not match expected size ({d}) from shape ({d}) and dtype {s}.", .{ provided_data.len, expected_byte_size, shape, @tagName(dtype)});
                 return error.MismatchedDataSize;
             }
-            data_slice = allocator.dupe(u8, provided_data);
+            data_slice = try allocator.dupe(u8, provided_data);
         } else {
-            data_slice = allocator.alloc(u8, expected_byte_size);
+            data_slice = try allocator.alloc(u8, expected_byte_size);
             @memset(data_slice, 0);
         }
 

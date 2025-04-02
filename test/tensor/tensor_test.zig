@@ -6,21 +6,21 @@ const DType = zigtensor.DType;
 const Device = zigtensor.Device;
 
 test "expect tensor shape to be {2,3}" {
-    var gpa = std.heap.GeneralPurposeAllocator({}){};
-    defer gpa.deinit();
-    const allocator = gpa.allocator();
-
-    const t = Tensor.init(
-        allocator,
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ =  gpa.deinit();
+    var allocator = gpa.allocator();
+    var stride = [_]usize{3,1};
+    var t = try Tensor.init(
+        &allocator,
         &[_]usize{2,3},
-        &[_]usize{3,1},
+        &stride,
         zigtensor.DType.f32,
         zigtensor.Device.CPU,
         null,
     );
 
-    defer t.deinit();
+    defer _ = t.deinit();
 
     try std.testing.expect(t.shape.len == 2);
-    try std.testing.expect(t.data.len == 7);
+    try std.testing.expect(t.data.len == 24);
 }
