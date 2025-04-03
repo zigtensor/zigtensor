@@ -81,3 +81,38 @@ test "tensor-tensor element-wise addition" {
 
     std.testing.expectEqualSlices(expected_data[0..], actual_data);
 }
+
+test "expect tensor-tensor element-wise addition to fail with type mismatch" {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+
+    var data = [_]f32{1,2,3,4,5,6};
+
+    var allocator = gpa.allocator();
+    var stride = [_]usize{3,1};
+    var t = try Tensor(f32).initCpu(
+        &allocator,
+        &[_]usize{2,3},
+        &stride,
+        zigtensor.Device.CPU,
+        &data,
+    );
+    defer t.deinit();
+
+    var data2 = [_]u32{1,2,3,4,5,6};
+
+    const t2 = try Tensor(f32).initCpu(
+        &allocator,
+        &[_]usize{2,3},
+        &stride,
+        zigtensor.Device.CPU,
+        &data2,
+    );
+
+    t.add(t2);
+
+    const expected_data = [_]f32{1,4,6,8,10,12};
+    const actual_data: []f32 = try t.slice();
+
+    std.testing.expectEqualSlices(expected_data[0..], actual_data);
+}
