@@ -66,31 +66,38 @@ test "tensor-tensor element-wise addition" {
     );
     defer t.deinit();
 
-    const t2 = try Tensor(f32).initCpu(
-        &allocator,
+    var gpa2 = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa2.deinit();
+
+    var data2 = [_]f32{1,2,3,4,5,6};
+
+    var allocator2 = gpa2.allocator();
+    var t2 = try Tensor(f32).initCpu(
+        &allocator2,
         &[_]usize{2,3},
         &stride,
         zigtensor.Device.CPU,
-        &data,
+        &data2,
     );
+    defer t2.deinit();
 
-    t.add(t2);
+    try t.add(t2);
 
-    const expected_data = [_]f32{1,4,6,8,10,12};
+    const expected_data = [_]f32{2,4,6,8,10,12};
     const actual_data: []f32 = try t.slice();
 
-    std.testing.expectEqualSlices(expected_data[0..], actual_data);
+    try std.testing.expectEqualSlices(f32, expected_data[0..], actual_data);
 }
 
-test "expect tensor-tensor element-wise addition to fail with type mismatch" {
+test "u32 tensor-tensor element-wise addition" {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
 
-    var data = [_]f32{1,2,3,4,5,6};
+    var data = [_]u32{1,2,3,4,5,6};
 
     var allocator = gpa.allocator();
     var stride = [_]usize{3,1};
-    var t = try Tensor(f32).initCpu(
+    var t = try Tensor(u32).initCpu(
         &allocator,
         &[_]usize{2,3},
         &stride,
@@ -99,20 +106,25 @@ test "expect tensor-tensor element-wise addition to fail with type mismatch" {
     );
     defer t.deinit();
 
+    var gpa2 = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa2.deinit();
+
     var data2 = [_]u32{1,2,3,4,5,6};
 
-    const t2 = try Tensor(f32).initCpu(
-        &allocator,
+    var allocator2 = gpa2.allocator();
+    var t2 = try Tensor(u32).initCpu(
+        &allocator2,
         &[_]usize{2,3},
         &stride,
         zigtensor.Device.CPU,
         &data2,
     );
+    defer t2.deinit();
 
-    t.add(t2);
+    try t.add(t2);
 
-    const expected_data = [_]f32{1,4,6,8,10,12};
-    const actual_data: []f32 = try t.slice();
+    const expected_data = [_]u32{2,4,6,8,10,12};
+    const actual_data: []u32 = try t.slice();
 
-    std.testing.expectEqualSlices(expected_data[0..], actual_data);
+    try std.testing.expectEqualSlices(u32, expected_data[0..], actual_data);
 }
