@@ -5,4 +5,5 @@ pub const Error = error {
     InvalidType,
     ShapeMismatch,
     StrideMismatch,
+    TypeMismatch,
 };
