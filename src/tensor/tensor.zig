@@ -73,5 +73,22 @@ pub fn Tensor(comptime T: type) type {
                 return errors.Error.InvalidDevice;
             }
         }
+
+        pub fn add(self: *@This(), other: @This()) !void {
+            // if (@tagName(self.T) != @tagName(other.T)) {
+            //     return errors.Error.TypeMismatch;
+            // }
+            if (!std.mem.eql(usize, self.shape, other.shape)) {
+                return errors.Error.ShapeMismatch;
+            }
+            if (!std.mem.eql(usize, self.strides, other.strides)) {
+                return errors.Error.StrideMismatch;
+            }
+
+            for (other.data, 0..) |value_to_add, i| {
+                self.data[i] += value_to_add;
+            }
+
+        }
     };
 }
