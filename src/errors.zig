@@ -3,4 +3,6 @@ pub const Error = error {
     NotImplemented, 
     InvalidDevice,
     InvalidType,
+    ShapeMismatch,
+    StrideMismatch,
 };
