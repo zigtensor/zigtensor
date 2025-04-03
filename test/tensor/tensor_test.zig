@@ -11,41 +11,40 @@ test "expect tensor shape to be {2,3}" {
 
     var allocator = gpa.allocator();
     var stride = [_]usize{3,1};
-    var t = try Tensor.initCpu(
+    var t = try Tensor(f32).initCpu(
         &allocator,
         &[_]usize{2,3},
         &stride,
-        zigtensor.DType.f32,
         zigtensor.Device.CPU,
         null,
     );
+    defer t.deinit();
 
     try std.testing.expect(t.shape.len == 2);
-    try std.testing.expect(t.data.len == 24);
-
-    t.deinit();
+    try std.testing.expect(t.data.len == 6);
 }
 
-test "expect tensor slice" {
+test "expect tensor slice with initial data" {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ =  gpa.deinit();
 
-    var data = [_]u8{1,2,3,4,5,6};
+    var data = [_]f32{1,2,3,4,5,6};
 
     var allocator = gpa.allocator();
     var stride = [_]usize{3,1};
-    var t = try Tensor.initCpu(
+    var t = try Tensor(f32).initCpu(
         &allocator,
         &[_]usize{2,3},
         &stride,
-        zigtensor.DType.f32,
         zigtensor.Device.CPU,
         &data,
     );
+    defer t.deinit();
+
+    const actual_slice: []f32 = try t.slice();
 
     try std.testing.expect(t.shape.len == 2);
-    try std.testing.expect(t.data.len == 24);
-    try std.testing.expect(t.slice() == data);
+    try std.testing.expect(t.data.len == 6);
+    try std.testing.expectEqualSlices(f32, data[0..], actual_slice);
 
-    t.deinit();
 }
