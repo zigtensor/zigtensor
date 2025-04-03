@@ -75,9 +75,6 @@ pub fn Tensor(comptime T: type) type {
         }
 
         pub fn add(self: *@This(), other: @This()) !void {
-            // if (@tagName(self.T) != @tagName(other.T)) {
-            //     return errors.Error.TypeMismatch;
-            // }
             if (!std.mem.eql(usize, self.shape, other.shape)) {
                 return errors.Error.ShapeMismatch;
             }
