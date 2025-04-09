@@ -17,6 +17,7 @@ test "expect tensor shape to be {2,3}" {
         &stride,
         zigtensor.Device.CPU,
         null,
+        null,
     );
     defer t.deinit();
 
@@ -38,6 +39,7 @@ test "expect tensor slice with initial data" {
         &stride,
         zigtensor.Device.CPU,
         &data,
+        null,
     );
     defer t.deinit();
 
@@ -63,6 +65,7 @@ test "tensor-tensor element-wise addition" {
         &stride,
         zigtensor.Device.CPU,
         &data,
+        null,
     );
     defer t.deinit();
 
@@ -78,6 +81,7 @@ test "tensor-tensor element-wise addition" {
         &stride,
         zigtensor.Device.CPU,
         &data2,
+        null,
     );
     defer t2.deinit();
 
@@ -103,6 +107,7 @@ test "u32 tensor-tensor element-wise addition" {
         &stride,
         zigtensor.Device.CPU,
         &data,
+        null,
     );
     defer t.deinit();
 
@@ -118,6 +123,7 @@ test "u32 tensor-tensor element-wise addition" {
         &stride,
         zigtensor.Device.CPU,
         &data2,
+        null,
     );
     defer t2.deinit();
 
@@ -127,4 +133,29 @@ test "u32 tensor-tensor element-wise addition" {
     const actual_data: []u32 = try t.slice();
 
     try std.testing.expectEqualSlices(u32, expected_data[0..], actual_data);
+}
+
+test "fill with all 2's" {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ =  gpa.deinit();
+
+    var allocator = gpa.allocator();
+    var stride = [_]usize{3,1};
+    var t = try Tensor(f32).initCpu(
+        &allocator,
+        &[_]usize{2,3},
+        &stride,
+        zigtensor.Device.CPU,
+        null,
+        2,
+    );
+    defer t.deinit();
+
+    try std.testing.expect(t.shape.len == 2);
+    try std.testing.expect(t.data.len == 6);
+
+    const expected_data = [_]f32{2,2,2,2,2,2};
+    const actual_data: []f32 = try t.slice();
+
+    try std.testing.expectEqualSlices(f32, expected_data[0..], actual_data);
 }
