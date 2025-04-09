@@ -23,9 +23,11 @@ pub fn Tensor(comptime T: type) type {
             shape: []const usize,
             strides: []usize,
             device_id: types.Device,
-            initial_data: ?[]T
+            initial_data: ?[]T,
+            fill: ?T
         ) !@This() {
             var element_count: usize = 1;
+            const fill_value = if (fill != null) fill.? else 0;
 
             if (shape.len == 0 and initial_data == null) {
                 element_count = 0;
@@ -49,7 +51,7 @@ pub fn Tensor(comptime T: type) type {
                 data_slice = try allocator.dupe(T, provided_data);
             } else {
                 data_slice = try allocator.alloc(T, element_count);
-                @memset(std.mem.sliceAsBytes(data_slice), 0);
+                @memset(data_slice, fill_value);
             }
 
             return @This() {
