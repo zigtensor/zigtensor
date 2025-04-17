@@ -67,7 +67,7 @@ pub fn Tensor(comptime T: type) type {
             self.allocator.free(self.data);
         }
 
-        pub fn slice(self: *@This()) ![]T {
+        pub fn slice(self: *const @This()) ![]T {
             if (self.device_id == types.Device.CPU) {
                 return self.data;
             } else {
@@ -89,5 +89,41 @@ pub fn Tensor(comptime T: type) type {
             }
 
         }
+
+        pub fn allocAdd(self: *@This(), other: @This(), allocator: *std.mem.Allocator) !@This() {
+            if (!std.mem.eql(usize, self.shape, other.shape)) {
+                return errors.Error.ShapeMismatch;
+            }
+            if (!std.mem.eql(usize, self.strides, other.strides)) {
+                return errors.Error.StrideMismatch;
+            }
+
+            const shape = try allocator.dupe(usize, self.shape);
+            defer _ = allocator.free(shape);
+            const strides = try allocator.dupe(usize, self.strides);
+            defer _ = allocator.free(strides);
+
+            const self_data_slice = try self.slice();
+
+            const result_data = try allocator.dupe(T, self_data_slice);
+            defer _ = allocator.free(result_data);
+
+            var result_tensor = @This(){
+                .allocator = allocator,
+                .shape = shape,
+                .strides = strides,
+                .device_id = self.device_id,
+                .data = result_data,
+            };
+
+            const other_data_slice = try other.slice();
+
+            for (other_data_slice, 0..) |value_to_add, i| {
+                result_tensor.data[i] += value_to_add;
+            }
+
+            return result_tensor;
+        }
     };
 }
+
