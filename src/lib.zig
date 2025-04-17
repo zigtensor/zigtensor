@@ -3,6 +3,7 @@ const errors = @import("./errors.zig");
 
 pub const types = @import("./types.zig");
 pub const tensor = @import("./tensor/tensor.zig");
+// pub const cops = @import("./ops/cpu/arithmetic.zig");
 
 pub const Tensor = tensor.Tensor;
 pub const DType = types.DType;
