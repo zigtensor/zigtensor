@@ -2,9 +2,11 @@ const std = @import("std");
 
 const type_tests = @import("./core/types_test.zig");
 const tensor_tests = @import("./tensor/tensor_test.zig");
+// const cpu_operations_tests = @import("./ops/cpu/arithmetic.zig");
 
 test "expect true to be true" {
     try std.testing.expect(true == true);
     std.testing.refAllDecls(type_tests);
     std.testing.refAllDecls(tensor_tests);
+    // std.testing.refAllDecls(cpu_operations_tests);
 }
