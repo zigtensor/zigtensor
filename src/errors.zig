@@ -1,6 +1,6 @@
-pub const Error = error { 
+pub const Error = error{
     OutOfMemory,
-    NotImplemented, 
+    NotImplemented,
     InvalidDevice,
     InvalidType,
     ShapeMismatch,
