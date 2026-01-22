@@ -18,14 +18,7 @@ pub fn Tensor(comptime T: type) type {
         device_id: types.Device,
         data: []T,
 
-        pub fn initCpu (
-            allocator: *std.mem.Allocator,
-            shape: []const usize,
-            strides: []usize,
-            device_id: types.Device,
-            initial_data: ?[]T,
-            fill: ?T
-        ) !@This() {
+        pub fn initCpu(allocator: *std.mem.Allocator, shape: []const usize, strides: []usize, device_id: types.Device, initial_data: ?[]T, fill: ?T) !@This() {
             var element_count: usize = 1;
             const fill_value = if (fill != null) fill.? else 0;
 
@@ -44,8 +37,7 @@ pub fn Tensor(comptime T: type) type {
 
             if (initial_data) |provided_data| {
                 if (provided_data.len != expected_byte_size / element_size) {
-                    std.log.err("Provided data size ({d}) does not match expected size ({d}) from shape ({d}) and type {s}.",
-                        .{ provided_data.len, expected_byte_size, shape, @typeName(T)});
+                    std.log.err("Provided data size ({d}) does not match expected size ({d}) from shape ({any}) and type {s}.", .{ provided_data.len, expected_byte_size, shape, @typeName(T) });
                     return error.MismatchedDataSize;
                 }
                 data_slice = try allocator.dupe(T, provided_data);
@@ -54,7 +46,7 @@ pub fn Tensor(comptime T: type) type {
                 @memset(data_slice, fill_value);
             }
 
-            return @This() {
+            return @This(){
                 .allocator = allocator,
                 .shape = shape,
                 .strides = strides,
@@ -62,7 +54,7 @@ pub fn Tensor(comptime T: type) type {
                 .data = data_slice,
             };
         }
-        
+
         pub fn deinit(self: *@This()) void {
             self.allocator.free(self.data);
         }
@@ -87,7 +79,6 @@ pub fn Tensor(comptime T: type) type {
             for (other.data, 0..) |value_to_add, i| {
                 self.data[i] += value_to_add;
             }
-
         }
     };
 }
