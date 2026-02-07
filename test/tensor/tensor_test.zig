@@ -9,10 +9,10 @@ test "expect tensor shape to be {2,3}" {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
 
-    var allocator = gpa.allocator();
+    const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
     var t = try Tensor(f32).initCpu(
-        &allocator,
+        allocator,
         &[_]usize{ 2, 3 },
         &stride,
         zigtensor.Device.CPU,
@@ -31,10 +31,10 @@ test "expect tensor slice with initial data" {
 
     var data = [_]f32{ 1, 2, 3, 4, 5, 6 };
 
-    var allocator = gpa.allocator();
+    const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
     var t = try Tensor(f32).initCpu(
-        &allocator,
+        allocator,
         &[_]usize{ 2, 3 },
         &stride,
         zigtensor.Device.CPU,
@@ -56,10 +56,10 @@ test "tensor-tensor element-wise addition" {
 
     var data = [_]f32{ 1, 2, 3, 4, 5, 6 };
 
-    var allocator = gpa.allocator();
+    const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
     var t = try Tensor(f32).initCpu(
-        &allocator,
+        allocator,
         &[_]usize{ 2, 3 },
         &stride,
         zigtensor.Device.CPU,
@@ -73,9 +73,9 @@ test "tensor-tensor element-wise addition" {
 
     var data2 = [_]f32{ 1, 2, 3, 4, 5, 6 };
 
-    var allocator2 = gpa2.allocator();
+    const allocator2 = gpa2.allocator();
     var t2 = try Tensor(f32).initCpu(
-        &allocator2,
+        allocator2,
         &[_]usize{ 2, 3 },
         &stride,
         zigtensor.Device.CPU,
@@ -98,10 +98,10 @@ test "u32 tensor-tensor element-wise addition" {
 
     var data = [_]u32{ 1, 2, 3, 4, 5, 6 };
 
-    var allocator = gpa.allocator();
+    const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
     var t = try Tensor(u32).initCpu(
-        &allocator,
+        allocator,
         &[_]usize{ 2, 3 },
         &stride,
         zigtensor.Device.CPU,
@@ -115,9 +115,9 @@ test "u32 tensor-tensor element-wise addition" {
 
     var data2 = [_]u32{ 1, 2, 3, 4, 5, 6 };
 
-    var allocator2 = gpa2.allocator();
+    const allocator2 = gpa2.allocator();
     var t2 = try Tensor(u32).initCpu(
-        &allocator2,
+        allocator2,
         &[_]usize{ 2, 3 },
         &stride,
         zigtensor.Device.CPU,
@@ -138,10 +138,10 @@ test "fill with all 2's" {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
 
-    var allocator = gpa.allocator();
+    const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
     var t = try Tensor(f32).initCpu(
-        &allocator,
+        allocator,
         &[_]usize{ 2, 3 },
         &stride,
         zigtensor.Device.CPU,

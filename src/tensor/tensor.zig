@@ -12,13 +12,13 @@ fn sizeOfDType(dtype: types.DType) usize {
 
 pub fn Tensor(comptime T: type) type {
     return struct {
-        allocator: *std.mem.Allocator,
+        allocator: std.mem.Allocator,
         shape: []const usize,
         strides: []usize,
         device_id: types.Device,
         data: []T,
 
-        pub fn initCpu(allocator: *std.mem.Allocator, shape: []const usize, strides: []usize, device_id: types.Device, initial_data: ?[]T, fill: ?T) !@This() {
+        pub fn initCpu(allocator: std.mem.Allocator, shape: []const usize, strides: []usize, device_id: types.Device, initial_data: ?[]T, fill: ?T) !@This() {
             var element_count: usize = 1;
             const fill_value = if (fill != null) fill.? else 0;
 
