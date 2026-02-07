@@ -30,6 +30,12 @@ pub fn Tensor(comptime T: type) type {
                 }
             }
 
+            const owned_shape = try allocator.dupe(usize, shape);
+            errdefer allocator.free(owned_shape);
+
+            const owned_strides = try allocator.dupe(usize, strides);
+            errdefer allocator.free(owned_strides);
+
             const element_size = @sizeOf(T);
             const expected_byte_size = element_count * element_size;
 
@@ -41,21 +47,25 @@ pub fn Tensor(comptime T: type) type {
                     return error.MismatchedDataSize;
                 }
                 data_slice = try allocator.dupe(T, provided_data);
+                errdefer allocator.free(data_slice);
             } else {
                 data_slice = try allocator.alloc(T, element_count);
                 @memset(data_slice, fill_value);
+                errdefer allocator.free(data_slice);
             }
 
             return @This(){
                 .allocator = allocator,
-                .shape = shape,
-                .strides = strides,
+                .shape = owned_shape,
+                .strides = owned_strides,
                 .device_id = device_id,
                 .data = data_slice,
             };
         }
 
         pub fn deinit(self: *@This()) void {
+            self.allocator.free(self.shape);
+            self.allocator.free(self.strides);
             self.allocator.free(self.data);
         }
 
