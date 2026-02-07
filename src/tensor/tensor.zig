@@ -44,7 +44,7 @@ pub fn Tensor(comptime T: type) type {
             if (initial_data) |provided_data| {
                 if (provided_data.len != expected_byte_size / element_size) {
                     std.log.err("Provided data size ({d}) does not match expected size ({d}) from shape ({any}) and type {s}.", .{ provided_data.len, expected_byte_size, shape, @typeName(T) });
-                    return error.MismatchedDataSize;
+                    return error.DataSizeMismatch;
                 }
                 data_slice = try allocator.dupe(T, provided_data);
                 errdefer allocator.free(data_slice);
