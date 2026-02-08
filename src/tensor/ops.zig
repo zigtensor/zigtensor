@@ -4,11 +4,24 @@ const types = @import("../types.zig");
 const errors = @import("../errors.zig");
 
 pub fn add(comptime T: type, allocator: std.mem.Allocator, a: *const Tensor(T), b: *const Tensor(T)) !Tensor(T) {
-    if (a.shape != b.shape) {
-        return errors.Error.ShapeMismatch;
+    for (a.shape, b.shape) |a_value, b_value| {
+        if (a_value != b_value) {
+            return errors.Error.ShapeMismatch;
+        }
     }
-    if (a.strides != b.strides) {
-        return errors.Error.StrideMismatch;
+
+    for (a.strides, b.strides) |a_value, b_value| {
+        if (a_value != b_value) {
+            return errors.Error.StrideMismatch;
+        }
     }
-    return Tensor(f32).initCpu(allocator, a.shape, a.strides, a.device_id, a.add(b));
+
+    var out = try Tensor(T).initCpu(allocator, a.shape, a.strides, a.device_id, null, 0);
+    errdefer out.deinit();
+
+    for (out.data, a.data, b.data) |*dst, a_value_to_add, b_value_to_add| {
+        dst.* = a_value_to_add + b_value_to_add;
+    }
+
+    return out;
 }
