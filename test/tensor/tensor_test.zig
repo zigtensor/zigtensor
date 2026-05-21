@@ -6,7 +6,7 @@ const DType = zigtensor.DType;
 const Device = zigtensor.Device;
 
 test "expect tensor shape to be {2,3}" {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
 
     const allocator = gpa.allocator();
@@ -26,7 +26,7 @@ test "expect tensor shape to be {2,3}" {
 }
 
 test "expect tensor slice with initial data" {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
 
     var data = [_]f32{ 1, 2, 3, 4, 5, 6 };
@@ -51,7 +51,7 @@ test "expect tensor slice with initial data" {
 }
 
 test "tensor-tensor element-wise addition" {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
 
     var data = [_]f32{ 1, 2, 3, 4, 5, 6 };
@@ -68,7 +68,7 @@ test "tensor-tensor element-wise addition" {
     );
     defer t.deinit();
 
-    var gpa2 = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa2 = std.heap.DebugAllocator(.{}){};
     defer _ = gpa2.deinit();
 
     var data2 = [_]f32{ 1, 2, 3, 4, 5, 6 };
@@ -93,7 +93,7 @@ test "tensor-tensor element-wise addition" {
 }
 
 test "u32 tensor-tensor element-wise addition" {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
 
     var data = [_]u32{ 1, 2, 3, 4, 5, 6 };
@@ -110,7 +110,7 @@ test "u32 tensor-tensor element-wise addition" {
     );
     defer t.deinit();
 
-    var gpa2 = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa2 = std.heap.DebugAllocator(.{}){};
     defer _ = gpa2.deinit();
 
     var data2 = [_]u32{ 1, 2, 3, 4, 5, 6 };
@@ -135,7 +135,7 @@ test "u32 tensor-tensor element-wise addition" {
 }
 
 test "fill with all 2's" {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
 
     const allocator = gpa.allocator();

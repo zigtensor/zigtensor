@@ -54,7 +54,7 @@ const zt = @import("zigtensor"); // Project's main import
 
 pub fn main() !void {
     // Standard Zig allocator pattern
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
 

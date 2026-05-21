@@ -5,7 +5,7 @@ const Tensor = zigtensor.Tensor;
 const ops = zigtensor.ops;
 
 test "expect tensor to be sum of two tensors" {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
 
     var data = [_]f32{ 1, 2, 3, 4, 5, 6 };
