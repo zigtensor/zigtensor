@@ -28,6 +28,4 @@ pub fn build(b: *std.Build) void {
 
     const run_unit_tests = b.addRunArtifact(unit_tests);
     test_step.dependOn(&run_unit_tests.step);
-
-    b.default_step.dependOn(test_step);
 }
