@@ -18,9 +18,9 @@ pub fn Tensor(comptime T: type) type {
         device_id: types.Device,
         data: []T,
 
-        pub fn initCpu(allocator: std.mem.Allocator, shape: []const usize, strides: []usize, device_id: types.Device, initial_data: ?[]T, fill: ?T) !@This() {
+        pub fn initCpu(allocator: std.mem.Allocator, shape: []const usize, strides: []usize, device_id: types.Device, initial_data: ?[]T, initial_fill: ?T) !@This() {
             var element_count: usize = 1;
-            const fill_value = if (fill != null) fill.? else 0;
+            const fill_value = if (initial_fill != null) initial_fill.? else 0;
 
             if (shape.len == 0 and initial_data == null) {
                 element_count = 0;
@@ -88,6 +88,14 @@ pub fn Tensor(comptime T: type) type {
 
             for (other.data, 0..) |value_to_add, i| {
                 self.data[i] += value_to_add;
+            }
+        }
+
+        pub fn fill(self: *@This(), fill_value: T) void {
+            var i: usize = 0;
+            while (i < self.data.len) {
+                self.data[i] = fill_value;
+                i += 1;
             }
         }
     };
