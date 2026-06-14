@@ -10,9 +10,8 @@ fn sizeOfDType(dtype: types.DType) usize {
     };
 }
 
-fn createStridesFromShape(allocator: std.mem.Allocator, shape: []const usize) ![]const usize {
+fn createStridesFromShape(allocator: std.mem.Allocator, shape: []const usize) ![]usize {
     const strides = try allocator.alloc(usize, shape.len);
-    defer allocator.free(strides);
 
     const numberOfElements = shape.len;
     var i = numberOfElements;
@@ -49,9 +48,7 @@ pub fn Tensor(comptime T: type) type {
             const owned_shape = try allocator.dupe(usize, shape);
             errdefer allocator.free(owned_shape);
 
-            const strides = try createStridesFromShape(allocator, shape);
-
-            const owned_strides = try allocator.dupe(usize, strides);
+            const owned_strides = try createStridesFromShape(allocator, owned_shape);
             errdefer allocator.free(owned_strides);
 
             var data_slice: []T = undefined;
@@ -83,9 +80,7 @@ pub fn Tensor(comptime T: type) type {
             const owned_shape = try allocator.dupe(usize, shape);
             errdefer allocator.free(owned_shape);
 
-            const strides = try createStridesFromShape(allocator, shape);
-
-            const owned_strides = try allocator.dupe(usize, strides);
+            const owned_strides = try createStridesFromShape(allocator, shape);
             errdefer allocator.free(owned_strides);
 
             var data_slice: []T = undefined;
