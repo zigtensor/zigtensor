@@ -10,6 +10,38 @@ test "expect tensor shape to be {2,3}" {
     defer _ = gpa.deinit();
 
     const allocator = gpa.allocator();
+    var t = try Tensor(f32).init(
+        allocator,
+        &[_]usize{ 2, 3 },
+    );
+    defer t.deinit();
+
+    try std.testing.expect(t.shape.len == 2);
+    try std.testing.expect(t.data.len == 6);
+}
+
+test "expect tensor shape to be {2.3}, and fill to be 3" {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    defer _ = gpa.deinit();
+
+    const allocator = gpa.allocator();
+    var t = try Tensor(f32).initWithFill(
+        allocator,
+        &[_]usize{ 2, 3 },
+        3.0,
+    );
+    defer t.deinit();
+
+    try std.testing.expect(t.shape.len == 2);
+    try std.testing.expect(t.data.len == 6);
+    try std.testing.expect(t.data[0] == 3.0);
+}
+
+test "expect tensor with strides shape to be {2,3}" {
+    var gpa = std.heap.DebugAllocator(.{}){};
+    defer _ = gpa.deinit();
+
+    const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
     var t = try Tensor(f32).initWithStrides(
         allocator,
