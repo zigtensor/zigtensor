@@ -15,7 +15,7 @@ fn createStridesFromShape(allocator: std.mem.Allocator, shape: []const usize) ![
     defer allocator.free(strides);
 
     const numberOfElements = shape.len;
-    var i = numberOfElements - 1;
+    var i = numberOfElements;
 
     var growingProduct: usize = 1;
     while (i > 0) {
