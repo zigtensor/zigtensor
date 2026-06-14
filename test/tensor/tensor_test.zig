@@ -11,7 +11,7 @@ test "expect tensor shape to be {2,3}" {
 
     const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
-    var t = try Tensor(f32).initCpu(
+    var t = try Tensor(f32).initWithStrides(
         allocator,
         &[_]usize{ 2, 3 },
         &stride,
@@ -33,7 +33,7 @@ test "expect tensor slice with initial data" {
 
     const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
-    var t = try Tensor(f32).initCpu(
+    var t = try Tensor(f32).initWithStrides(
         allocator,
         &[_]usize{ 2, 3 },
         &stride,
@@ -58,7 +58,7 @@ test "tensor-tensor element-wise addition" {
 
     const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
-    var t = try Tensor(f32).initCpu(
+    var t = try Tensor(f32).initWithStrides(
         allocator,
         &[_]usize{ 2, 3 },
         &stride,
@@ -74,7 +74,7 @@ test "tensor-tensor element-wise addition" {
     var data2 = [_]f32{ 1, 2, 3, 4, 5, 6 };
 
     const allocator2 = gpa2.allocator();
-    var t2 = try Tensor(f32).initCpu(
+    var t2 = try Tensor(f32).initWithStrides(
         allocator2,
         &[_]usize{ 2, 3 },
         &stride,
@@ -100,7 +100,7 @@ test "u32 tensor-tensor element-wise addition" {
 
     const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
-    var t = try Tensor(u32).initCpu(
+    var t = try Tensor(u32).initWithStrides(
         allocator,
         &[_]usize{ 2, 3 },
         &stride,
@@ -116,7 +116,7 @@ test "u32 tensor-tensor element-wise addition" {
     var data2 = [_]u32{ 1, 2, 3, 4, 5, 6 };
 
     const allocator2 = gpa2.allocator();
-    var t2 = try Tensor(u32).initCpu(
+    var t2 = try Tensor(u32).initWithStrides(
         allocator2,
         &[_]usize{ 2, 3 },
         &stride,
@@ -140,7 +140,7 @@ test "fill with all 2's" {
 
     const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
-    var t = try Tensor(f32).initCpu(
+    var t = try Tensor(f32).initWithStrides(
         allocator,
         &[_]usize{ 2, 3 },
         &stride,
@@ -159,13 +159,13 @@ test "fill with all 2's" {
     try std.testing.expectEqualSlices(f32, expected_data[0..], actual_data);
 }
 
-test "fill with all 2's after initCpu" {
+test "fill with all 2's after init" {
     var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
 
     const allocator = gpa.allocator();
     var stride = [_]usize{ 3, 1 };
-    var t = try Tensor(f32).initCpu(
+    var t = try Tensor(f32).initWithStrides(
         allocator,
         &[_]usize{ 2, 3 },
         &stride,

@@ -12,7 +12,7 @@ test "expect tensor to be sum of two tensors" {
 
     const allocator = gpa.allocator();
     var strides = [_]usize{ 3, 1 };
-    var t1 = try Tensor(f32).initCpu(
+    var t1 = try Tensor(f32).initWithStrides(
         allocator,
         &[_]usize{ 2, 3 },
         &strides,
@@ -25,7 +25,7 @@ test "expect tensor to be sum of two tensors" {
     var data2 = [_]f32{ 1, 2, 3, 4, 5, 6 };
 
     var strides2 = [_]usize{ 3, 1 };
-    var t2 = try Tensor(f32).initCpu(
+    var t2 = try Tensor(f32).initWithStrides(
         allocator,
         &[_]usize{ 2, 3 },
         &strides2,

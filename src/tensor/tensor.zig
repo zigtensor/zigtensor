@@ -18,7 +18,61 @@ pub fn Tensor(comptime T: type) type {
         device_id: types.Device,
         data: []T,
 
-        pub fn initCpu(allocator: std.mem.Allocator, shape: []const usize, strides: []usize, device_id: types.Device, initial_data: ?[]T, initial_fill: ?T) !@This() {
+        pub fn init(allocator: std.mem.Allocator, shape: []const usize) !@This() {
+            var element_count: usize = 1;
+
+            if (shape.len == 0) {
+                element_count = 0;
+            } else {
+                for (shape) |dimension_size| {
+                    element_count *= dimension_size;
+                }
+            }
+
+            const owned_shape = try allocator.dupe(usize, shape);
+            errdefer allocator.free(owned_shape);
+
+            var data_slice: []T = undefined;
+
+            data_slice = try allocator.alloc(T, element_count);
+            @memset(data_slice, 0);
+            errdefer allocator.free(data_slice);
+
+            return @This(){
+                .allocator = allocator,
+                .shape = owned_shape,
+                .data = data_slice,
+            };
+        }
+
+        pub fn initWithFill(allocator: std.mem.Allocator, shape: []const usize, fill_value: T) !@This() {
+            var element_count: usize = 1;
+
+            if (shape.len == 0) {
+                element_count = 0;
+            } else {
+                for (shape) |dimension_size| {
+                    element_count *= dimension_size;
+                }
+            }
+
+            const owned_shape = try allocator.dupe(usize, shape);
+            errdefer allocator.free(owned_shape);
+
+            var data_slice: []T = undefined;
+
+            data_slice = try allocator.alloc(T, element_count);
+            @memset(data_slice, fill_value);
+            errdefer allocator.free(data_slice);
+
+            return @This(){
+                .allocator = allocator,
+                .shape = owned_shape,
+                .data = data_slice,
+            };
+        }
+
+        pub fn initWithStrides(allocator: std.mem.Allocator, shape: []const usize, strides: []usize, device_id: types.Device, initial_data: ?[]T, initial_fill: ?T) !@This() {
             var element_count: usize = 1;
             const fill_value = if (initial_fill != null) initial_fill.? else 0;
 

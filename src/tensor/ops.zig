@@ -16,7 +16,7 @@ pub fn add(comptime T: type, allocator: std.mem.Allocator, a: *const Tensor(T), 
         }
     }
 
-    var out = try Tensor(T).initCpu(allocator, a.shape, a.strides, a.device_id, null, 0);
+    var out = try Tensor(T).initWithStrides(allocator, a.shape, a.strides, a.device_id, null, 0);
     errdefer out.deinit();
 
     for (out.data, a.data, b.data) |*dst, a_value_to_add, b_value_to_add| {
