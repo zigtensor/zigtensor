@@ -10,6 +10,23 @@ fn sizeOfDType(dtype: types.DType) usize {
     };
 }
 
+fn createStridesFromShape(allocator: std.mem.Allocator, shape: []const usize) ![]const usize {
+    const strides = try allocator.alloc(usize, shape.len);
+    defer allocator.free(strides);
+
+    const numberOfElements = shape.len;
+    var i = numberOfElements - 1;
+
+    var growingProduct: usize = 1;
+    while (i > 0) {
+        i -= 1;
+        strides[i] = growingProduct;
+        growingProduct *= shape[i];
+    }
+
+    return strides;
+}
+
 pub fn Tensor(comptime T: type) type {
     return struct {
         allocator: std.mem.Allocator,
@@ -32,11 +49,10 @@ pub fn Tensor(comptime T: type) type {
             const owned_shape = try allocator.dupe(usize, shape);
             errdefer allocator.free(owned_shape);
 
+            const strides = try createStridesFromShape(allocator, shape);
+
             const owned_strides = try allocator.dupe(usize, strides);
             errdefer allocator.free(owned_strides);
-
-            const element_size = @sizeOf(T);
-            const expected_byte_size = element_count * element_size;
 
             var data_slice: []T = undefined;
 
@@ -67,14 +83,10 @@ pub fn Tensor(comptime T: type) type {
             const owned_shape = try allocator.dupe(usize, shape);
             errdefer allocator.free(owned_shape);
 
-            const owned_shape = try allocator.dupe(usize, shape);
-            errdefer allocator.free(owned_shape);
+            const strides = try createStridesFromShape(allocator, shape);
 
             const owned_strides = try allocator.dupe(usize, strides);
             errdefer allocator.free(owned_strides);
-
-            const element_size = @sizeOf(T);
-            const expected_byte_size = element_count * element_size;
 
             var data_slice: []T = undefined;
 
@@ -86,7 +98,7 @@ pub fn Tensor(comptime T: type) type {
                 .allocator = allocator,
                 .shape = owned_shape,
                 .strides = owned_strides,
-                .device_id = Device.CPU,
+                .device_id = types.Device.CPU,
                 .data = data_slice,
             };
         }
